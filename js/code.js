@@ -11,6 +11,9 @@ document.addEventListener('DOMContentLoaded', function () {
 		document.getElementById("closeRemoveContact").addEventListener("click", closeRemoveDialog);
 		document.getElementById("confirmContactRemove").addEventListener("click", confirmRemove);
 	}
+	else if (document.getElementById("homepage")) {
+		readCookie();
+	}
 });
 
 function doLogin() {
@@ -144,9 +147,10 @@ function readCookie() {
 	}
 
 	if (userId < 0) {
-		window.location.href = "index.html";
+		window.location.href = "login.html";
 	} else {
 		document.getElementById("userName").innerHTML = firstName + " " + lastName;
+		window.location.href = "contacts.html";
 	}
 }
 
