@@ -1,0 +1,56 @@
+---
+swagger: "2.0"
+info:
+  description: A contact manager API
+  version: 1.0.0
+  title: Contact Manager API
+  contact:
+    email: josepha@knights.ucf.edu
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+host: virtserver.swaggerhub.com
+basePath: /joseption/poosd/1.0.0
+tags:
+- name: admins
+  description: Secured Admin-only calls
+- name: developers
+  description: Operations available to regular developers
+schemes:
+- https
+paths:
+  /Login.php:
+    post:
+      tags:
+      - Users
+      summary: Login to the Contact Manager
+      description: |
+        Login to the Contact Manager
+      operationId: doLogin
+      produces:
+      - application/json
+      parameters:
+      - in: body
+        name: loginItem
+        description: Login
+        required: false
+        schema:
+          $ref: '#/definitions/Login'
+      responses:
+        "200":
+          description: Success
+        "404":
+          description: URL Not Found
+definitions:
+  Login:
+    type: object
+    required:
+    - login
+    - password
+    properties:
+      login:
+        type: string
+        example: fred
+      password:
+        type: string
+        example: secret
