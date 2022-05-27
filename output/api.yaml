@@ -18,6 +18,7 @@ tags:
   description: Operations available to regular developers
 schemes:
 - https
+- http
 paths:
   /Login.php:
     post:
