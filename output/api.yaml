@@ -9,15 +9,14 @@ info:
   license:
     name: Apache 2.0
     url: http://www.apache.org/licenses/LICENSE-2.0.html
-host: virtserver.swaggerhub.com
-basePath: /joseption/poosd/1.0.0
+host: joseption.com
+basePath: /api
 tags:
 - name: admins
   description: Secured Admin-only calls
 - name: developers
   description: Operations available to regular developers
 schemes:
-- https
 - http
 paths:
   /Login.php:
