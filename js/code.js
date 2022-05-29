@@ -243,21 +243,8 @@ function addContact() {
 		return;
 	}
 
-	//testing
-	currentSearch = "test";
-	if (document.getElementById("contactItems").innerHTML && fname.value.toLowerCase().includes(currentSearch.toLowerCase())) {
-		var contact = {
-			id: Math.floor(Math.random() * 1000),
-			name: fname.value,
-			phone: phone.value,
-			email: email.value
-		}
-		addContactToResultList(contact, true);
-	}
-	//testing end
-
 	let tmp = {
-		name: name.value,
+		name: fname.value,
 		phone: phone.value,
 		email: email.value,
 		userId,
@@ -273,19 +260,20 @@ function addContact() {
 		xhr.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				document.getElementById("contactAddResult").innerHTML = "<span style='color:green !important;'>Contact added successfully</span>";
-				//TESTING BELOW LINE
-				currentSearch = "test";
 				if (document.getElementById("contactItems").innerHTML && fname.value.toLowerCase().includes(currentSearch.toLowerCase())) {
+					let jObj = JSON.parse(xhr.responseText);
 					var contact = {
-						id: Math.floor(Math.random() * 1000),
-						name: fname.value,
-						phone: phone.value,
-						email: email.value
+						id: jObj.id,
+						name: jObj.name,
+						phone: jObj.phone,
+						email: jObj.email
 					}
 					addContactToResultList(contact, true);
 				}
 				fname.value = "";
 				phone.value = "";
+				document.getElementById("contactPhoneMaskInput").value = "";
+				document.getElementById("contactPhoneMaskInput").placeholder = "Phone"
 				email.value = "";
 			}
 		};
