@@ -205,22 +205,22 @@ function doLogout() {
 function addContact() {
 	var hasError = false;
 	var hasEmailError = false;
-	let first = document.getElementById("contactFirstName");
-	let last = document.getElementById("contactLastName");
+	let fname = document.getElementById("contactName");
+	let phone = document.getElementById("contactPhone");
 	let email = document.getElementById("contactEmail");
 	document.getElementById("contactAddResult").innerHTML = "";
 
-	if (!first.value) {
+	if (!fname.value) {
 		hasError = true;
-		first.classList.add("input-error");
+		fname.classList.add("input-error");
 	} else
-		first.classList.remove("input-error");
+		fname.classList.remove("input-error");
 
-	if (!last.value) {
+	if (!phone.value) {
 		hasError = true;
-		last.classList.add("input-error");
+		document.getElementById("contactPhoneMaskInput").classList.add("input-error");
 	} else
-		last.classList.remove("input-error");
+		document.getElementById("contactPhoneMaskInput").classList.remove("input-error");
 
 	if (!email.value) {
 		hasError = true;
@@ -244,13 +244,12 @@ function addContact() {
 	}
 
 	//testing
-	var name = first.value + " " + last.value;
 	currentSearch = "test";
-	if (document.getElementById("contactItems").innerHTML && name.toLowerCase().includes(currentSearch.toLowerCase())) {
+	if (document.getElementById("contactItems").innerHTML && fname.value.toLowerCase().includes(currentSearch.toLowerCase())) {
 		var contact = {
 			id: Math.floor(Math.random() * 1000),
-			firstName: first.value,
-			lastName: last.value,
+			name: fname.value,
+			phone: phone.value,
 			email: email.value
 		}
 		addContactToResultList(contact, true);
@@ -258,8 +257,8 @@ function addContact() {
 	//testing end
 
 	let tmp = {
-		firstName: first.value,
-		lastName: last.value,
+		name: name.value,
+		phone: phone.value,
 		email: email.value,
 		userId,
 	};
@@ -274,20 +273,19 @@ function addContact() {
 		xhr.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				document.getElementById("contactAddResult").innerHTML = "<span style='color:green !important;'>Contact added successfully</span>";
-				var name = first.value + " " + last.value;
 				//TESTING BELOW LINE
 				currentSearch = "test";
-				if (document.getElementById("contactItems").innerHTML && name.toLowerCase().includes(currentSearch.toLowerCase())) {
+				if (document.getElementById("contactItems").innerHTML && fname.value.toLowerCase().includes(currentSearch.toLowerCase())) {
 					var contact = {
 						id: Math.floor(Math.random() * 1000),
-						firstName: first.value,
-						lastName: last.value,
+						name: fname.value,
+						phone: phone.value,
 						email: email.value
 					}
 					addContactToResultList(contact, true);
 				}
-				first.value = "";
-				last.value = "";
+				fname.value = "";
+				phone.value = "";
 				email.value = "";
 			}
 		};
@@ -308,62 +306,62 @@ function test() {
 	let jsonObject = {
 		users: [{
 				id: 1,
-				firstName: 'Jeff',
-				lastName: 'Tester',
+				name: 'Jeff Bleff',
+				phone: '5647385456',
 				email: 'jeff1@test.com'
 			},
 			{
 				id: 2,
-				firstName: 'Tina',
-				lastName: 'Testerme',
+				name: 'Tina Mina',
+				phone: '5647385456',
 				email: 'jeff2@test.com'
 			},
 			{
 				id: 3,
-				firstName: 'Marge',
-				lastName: 'Testeryou',
+				name: 'Marge Darge',
+				phone: '5647385456',
 				email: 'jeff3@test.com'
 			},
 			{
 				id: 4,
-				firstName: 'Barb',
-				lastName: 'Testerep',
+				name: 'Barb Garb',
+				phone: '5647385456',
 				email: 'jeff4@test.com'
 			},
 			{
 				id: 5,
-				firstName: 'Leslie',
-				lastName: 'Testerop',
+				name: 'Leslie Fezlie',
+				phone: '5647385456',
 				email: 'jeff5@test.com'
 			},
 			{
 				id: 6,
-				firstName: 'Roger',
-				lastName: 'Testerung',
+				name: 'Roger Dodger',
+				phone: '5647385456',
 				email: 'jeff6@test.com'
 			},
 			{
 				id: 7,
-				firstName: 'George',
-				lastName: 'Testerey',
+				name: 'George jenk',
+				phone: '5647385456',
 				email: 'jeff7@test.com'
 			},
 			{
 				id: 8,
-				firstName: 'Bob',
-				lastName: 'Testernow',
+				name: 'Bob Bie',
+				phone: '5647385456',
 				email: 'jeff8@test.com'
 			},
 			{
 				id: 9,
-				firstName: 'Joe',
-				lastName: 'Testerone',
+				name: 'Joe Reg',
+				phone: '5647385456',
 				email: 'jeff9@test.com'
 			},
 			{
 				id: 10,
-				firstName: 'Mike',
-				lastName: 'Testering',
+				name: 'Mike Tae',
+				phone: '5647385456',
 				email: 'jeff10@test.com'
 			}
 		]
@@ -390,23 +388,30 @@ function addContactToResultList(user, isNew) {
 	id.innerText = user['id'];
 	id.style.display = "none";
 
-	var first = document.createElement("div");
-	var firstLabel = document.createElement("div");
-	var firstInput = document.createElement("input");
-	firstInput.style.display = "none";
-	firstLabel.innerText = user['firstName'];
-	firstInput.value = firstLabel.innerText;
-	first.appendChild(firstLabel);
-	first.appendChild(firstInput);
+	var name = document.createElement("div");
+	var nameLabel = document.createElement("div");
+	var nameInput = document.createElement("input");
+	nameInput.style.display = "none";
+	nameLabel.innerText = user['name'];
+	nameInput.value = nameLabel.innerText;
+	name.appendChild(nameLabel);
+	name.appendChild(nameInput);
 
-	var last = document.createElement("div");
-	var lastLabel = document.createElement("div");
-	var lastInput = document.createElement("input");
-	lastInput.style.display = "none";
-	lastLabel.innerText = user['lastName'];
-	lastInput.value = lastLabel.innerText;
-	last.appendChild(lastLabel);
-	last.appendChild(lastInput);
+	var phone = document.createElement("div");
+	var phoneLabel = document.createElement("div");
+	var phoneInput = document.createElement("input");
+	var phoneContainer = document.createElement("div");
+	phoneContainer.style.display = "none";
+	phoneInput.style.display = "none";
+	phoneInput.setAttribute("default-placeholder", "");
+	phoneLabel.innerText = user['phone'];
+	phoneLabel.classList.add("phone-number-label-masked");
+	phoneInput.value = phoneLabel.innerText;
+	phoneInput.classList.add("phone-number-masked");
+	phoneInput.id = "phone_input_" + user['id'];
+	phone.appendChild(phoneLabel);
+	phoneContainer.appendChild(phoneInput);
+	phone.appendChild(phoneContainer);
 
 	var email = document.createElement("div");
 	var emailLabel = document.createElement("div");
@@ -444,8 +449,8 @@ function addContactToResultList(user, isNew) {
 	btns.classList.add("search-btns");
 	info.classList.add("search-info");
 	info.appendChild(id);
-	info.appendChild(first);
-	info.appendChild(last);
+	info.appendChild(name);
+	info.appendChild(phone);
 	info.appendChild(email);
 	container.appendChild(info);
 	btns.appendChild(remove);
@@ -459,11 +464,11 @@ function addContactToResultList(user, isNew) {
 		edit.style.display = "none";
 		update.style.display = "block";
 		cancel.style.display = "block";
-		firstInput.style.display = "block";
-		lastInput.style.display = "block";
+		nameInput.style.display = "block";
+		phoneContainer.style.display = "block";
 		emailInput.style.display = "block";
-		firstLabel.style.display = "none";
-		lastLabel.style.display = "none";
+		nameLabel.style.display = "none";
+		phoneLabel.style.display = "none";
 		emailLabel.style.display = "none";
 	});
 
@@ -472,35 +477,61 @@ function addContactToResultList(user, isNew) {
 		edit.style.display = "block";
 		update.style.display = "none";
 		cancel.style.display = "none";
-		firstInput.style.display = "none";
-		lastInput.style.display = "none";
+		nameInput.style.display = "none";
+		phoneContainer.style.display = "none";
 		emailInput.style.display = "none";
-		firstLabel.style.display = "block";
-		lastLabel.style.display = "block";
+		nameLabel.style.display = "block";
+		phoneLabel.style.display = "block";
 		emailLabel.style.display = "block";
-		firstInput.value = firstLabel.innerText;
-		lastInput.value = lastLabel.innerText;
+		nameInput.value = nameLabel.innerText;
+		phoneInput.value = formatPhoneNumber(phoneLabel.innerText);
 		emailInput.value = emailLabel.innerText;
 	});
 
 	update.addEventListener("click", function () {
+		var hasError = false;
+		if (!nameInput.value) {
+			hasError = true;
+			nameInput.classList.add("input-error");
+		} else
+			nameInput.classList.remove("input-error");
+
+	    var phoneNum = document.getElementById(phoneInput.id);
+		if (!phoneNum.value) {
+			hasError = true;
+			document.getElementById(phoneInput.id + "MaskInput").classList.add("input-error");
+		} else
+			document.getElementById(phoneInput.id + "MaskInput").classList.remove("input-error");
+
+		var regex = /\S+@\S+\.\S+/;
+		if (!emailInput.value || !regex.test(emailInput.value)) {
+			hasError = true;
+			emailInput.classList.add("input-error");
+		} else {
+			emailInput.classList.remove("input-error");
+		}
+
+		if (hasError)
+			return;
+
 		remove.style.display = "block";
 		edit.style.display = "block";
 		update.style.display = "none";
 		cancel.style.display = "none";
-		firstInput.style.display = "none";
-		lastInput.style.display = "none";
+		nameInput.style.display = "none";
+		phoneContainer.style.display = "none";
 		emailInput.style.display = "none";
-		firstLabel.style.display = "block";
-		lastLabel.style.display = "block";
+		nameLabel.style.display = "block";
+		phoneLabel.style.display = "block";
 		emailLabel.style.display = "block";
-		firstLabel.innerText = firstInput.value;
-		lastLabel.innerText = lastInput.value;
+		nameLabel.innerText = nameInput.value;
+		var phoneNum = document.getElementById(phoneInput.id);
+		phoneLabel.innerText = formatPhoneNumber(phoneNum.value);
 		emailLabel.innerText = emailInput.value;
 	});
 
 	remove.addEventListener("click", function () {
-		promptRemove(user['id'], firstLabel.innerText + ' ' + lastLabel.innerText, container);
+		promptRemove(user['id'], nameLabel.innerText, container);
 	});
 
 	if (isNew)
@@ -513,6 +544,9 @@ function addContactToResultList(user, isNew) {
 			document.getElementById("mainContactContent").classList.remove("no-height");
 		}, 50);
 	}
+
+	labelMaskSetup.init();
+	inputMaskSetup.init(true);
 }
 
 function showLoadingContactResults() {
@@ -670,14 +704,50 @@ function openSearchContactDialog() {
 		document.getElementById("addContactDialog").style.display = "none";
 		document.getElementById("accessUIDiv").classList.remove("no-height");
 		document.getElementById("mainContactContent").classList.remove("no-scale");
-		document.getElementById("contactFirstName").value = "";
-		document.getElementById("contactLastName").value = "";
+		document.getElementById("contactName").value = "";
+		document.getElementById("contactPhone").value = "";
+		document.getElementById("contactPhoneMaskInput").value = "";
 		document.getElementById("contactEmail").value = "";
-		document.getElementById("contactFirstName").classList.remove("input-error");
-		document.getElementById("contactLastName").classList.remove("input-error");
+		document.getElementById("contactName").classList.remove("input-error");
+		document.getElementById("contactPhoneMaskInput").classList.remove("input-error");
+		var phonePlaceHolder = document.getElementById("contactPhone").getAttribute("default-placeholder");
+		document.getElementById("contactPhoneMaskInput").placeholder = phonePlaceHolder;
 		document.getElementById("contactEmail").classList.remove("input-error");
 		document.getElementById("contactAddResult").innerText = "";
 	}, 150);
 	document.getElementById("inputForm").classList.add("no-height");
 	document.getElementById("accessUIDiv").style.display = "flex";
+}
+
+function formatPhoneNumber(value) {
+	var placeholder = "(999) 999-9999",
+		newValue = '',
+		i, j, isInt,
+		strippedValue = value.replace(/\D/g, ""),
+		l = placeholder.length,
+		maskedPhoneNumber = 'XdDmMyY9';
+
+	for (i = 0, j = 0; i < l; i++) {
+		isInt = !isNaN(parseInt(strippedValue[j]));
+		matchesNumber = maskedPhoneNumber.indexOf(placeholder[i]) >= 0;
+
+		if (matchesNumber && isInt) {
+			newValue += strippedValue[j++];
+
+		} else if (matchesNumber && !isInt) {
+			return newValue;
+
+		} else {
+			newValue += placeholder[i];
+		}
+
+		if (strippedValue[j] == undefined) {
+			break;
+		}
+	}
+	if (newValue.length > 1) {
+		return newValue;
+	} else {
+		return "";
+	}
 }
