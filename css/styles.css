@@ -109,9 +109,10 @@ button {
 #firstName,
 #lastName,
 #searchText,
-#contactFirstName,
-#contactLastName,
-#contactEmail {
+#contactName,
+#contactPhone,
+#contactEmail,
+#contactPhoneMaskInput {
     font-size: 1.25em;
     width: 300px;
 }
@@ -426,4 +427,39 @@ select {
     -ms-animation: rotating 2s linear infinite;
     -o-animation: rotating 2s linear infinite;
     animation: rotating 2s linear infinite;
+  }
+
+  .phone-number-shell {
+    position: relative;
+    line-height: 1;
+    display: flex;
+  }
+  .phone-number-shell span {
+    position: absolute;
+    padding: 4px 7px;
+    font-size: 1.25em;
+    line-height: 30px;
+    color: gray;
+    pointer-events: none;
+  }
+
+  .default-shell span {
+    padding: 1px 7px !important;
+    font-size: unset !important;
+    line-height: 31px !important;
+  }
+
+  .phone-number-masked {
+    visibility: hidden;
+    display: none !important;
+    position: absolute;
+  }
+  .phone-number-shell span i {
+    color: transparent;
+    opacity: 0;
+    visibility: hidden;
+  }
+
+  span.phone-number-shell {
+    background-color: transparent;
   }
