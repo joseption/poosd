@@ -11,11 +11,11 @@
 	else
 	{
 		$stmt = $conn->prepare("DELETE from Contacts WHERE ID=?");
-		$stmt->bind_param("s", $id,);
+		$stmt->bind_param("i", $id,);
 		$stmt->execute();
 		$stmt->close();
 		$conn->close();
-		returnWithError("");
+		returnWithError("Contact Deleted");
 	}
 
 	function getRequestInfo()
