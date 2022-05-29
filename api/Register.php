@@ -1,6 +1,11 @@
 <?php
 
 	$inData = getRequestInfo();
+	$FirstName = "";
+	$LastName = "";
+	$Login= "";
+	$Password = "";
+	$id = 0;
 	
 
 	$conn = new mysqli("localhost", "TheBeast4", "WeLoveCOP4331", "COP4331"); 	
@@ -10,21 +15,27 @@
 	}
 	else
 	{
+		echo "Connection succesful";
+	}
+		
+        $sql = "INSERT INTO Users(FirstName, LastName, Login, Password)
+		VALUES ('$inData["FirstName"]', '$inData["LastName"]', '$inData["Login"]', '$inData["Password"]')";
 
-        $sql = "INSERT INTO Users (FirstName, LastName, Login, Password)
-		VALUES ($inData["FirstName"], $inData["LastName"], $inData["Login"], $inData["Password"])";
-
-		if (mysqli_query($conn, $sql)) 
+		if ($conn->query($sql))
 		{
-			echo "New record created successfully";
+			$row = $result->fetch_assoc();
+			$FirstName = $row['FirstName'];
+			$LastName = $row['LastName'];
+			$id = $row['ID'];
+
+			returnWithInfo($FirstName, $LastName, $id);
   		} 	
 		else 
 		{
-			echo "Error: " . $sql . "<br>" . mysqli_error($conn);
+			returnWithError("Account Creation Failed");
   		}
-				
+		  
 		$conn->close();
-	}
 	
 	function getRequestInfo()
 	{
