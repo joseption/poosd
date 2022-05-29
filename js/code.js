@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', function () {
 	if (document.location.href.includes("contacts.html")) {
 		document.getElementById("closeRemoveContact").addEventListener("click", closeRemoveDialog);
 		document.getElementById("confirmContactRemove").addEventListener("click", confirmRemove);
+		readCookie(true);
+		document.getElementById("userName").innerHTML = firstName + " " + lastName;
 	} else if (document.getElementById("homepage")) {
 		readCookie();
 	}
@@ -43,8 +45,8 @@ function doLogin() {
 		document.getElementById("loginResult").innerHTML = "";
 
 	let tmp = {
-		login: login,
-		password: password
+		login: login.value,
+		password: password.value
 	};
 	let jsonPayload = JSON.stringify(tmp);
 
@@ -57,21 +59,24 @@ function doLogin() {
 		xhr.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				let jsonObject = JSON.parse(xhr.responseText);
-				userId = jsonObject.id;
+				userId = jsonObject['id'];
+				if (jsonObject['error']) {
+					document.getElementById("loginResult").innerHTML = jsonObject['error'];
+				} else {
+					if (userId < 1) {
+						document.getElementById("loginName").classList.add("input-error");
+						document.getElementById("loginPassword").classList.add("input-error");
+						document.getElementById("loginResult").innerHTML = "The username or password was incorrect";
+						return;
+					}
 
-				if (userId < 1) {
-					document.getElementById("loginName").classList.add("input-error");
-					document.getElementById("loginPassword").classList.add("input-error");
-					document.getElementById("loginResult").innerHTML = "The username or password was incorrect";
-					return;
+					firstName = jsonObject['firstName'];
+					lastName = jsonObject['lastName'];
+
+					saveCookie();
+
+					window.location.href = "contacts.html";
 				}
-
-				firstName = jsonObject.firstName;
-				lastName = jsonObject.lastName;
-
-				saveCookie();
-
-				window.location.href = "contacts.html";
 			}
 		};
 		xhr.send(jsonPayload);
@@ -125,10 +130,10 @@ function doRegister() {
 		document.getElementById("loginResult").innerHTML = "";
 
 	let tmp = {
-		login: login,
-		password: password,
-		firstName: first,
-		lastName: last
+		login: login.value,
+		password: password.value,
+		firstName: first.value,
+		lastName: last.value
 	};
 	let jsonPayload = JSON.stringify(tmp);
 
@@ -141,19 +146,22 @@ function doRegister() {
 		xhr.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
 				let jsonObject = JSON.parse(xhr.responseText);
-				userId = jsonObject.id;
+				userId = jsonObject['id'];
+				if (jsonObject['error'] != "Account Created") {
+					document.getElementById("loginResult").innerHTML = jsonObject['error'];
+				} else {
+					if (userId < 1) {
+						document.getElementById("loginResult").innerHTML = "There was an error creating the account";
+						return;
+					}
 
-				if (userId < 1) {
-					document.getElementById("loginResult").innerHTML = "There was an error creating the account";
-					return;
+					firstName = jsonObject['firstName'];
+					lastName = jsonObject['lastName'];
+
+					saveCookie();
+
+					window.location.href = "contacts.html";
 				}
-
-				firstName = jsonObject.firstName;
-				lastName = jsonObject.lastName;
-
-				saveCookie();
-
-				window.location.href = "contacts.html";
 			}
 		};
 		xhr.send(jsonPayload);
@@ -170,7 +178,7 @@ function saveCookie() {
 	document.cookie = "firstName=" + firstName + ",lastName=" + lastName + ",userId=" + userId + ";expires=" + date.toGMTString();
 }
 
-function readCookie() {
+function readCookie(stayOnPage) {
 	userId = -1;
 	let data = document.cookie;
 	let splits = data.split(",");
@@ -186,11 +194,12 @@ function readCookie() {
 		}
 	}
 
-	if (userId < 0) {
-		window.location.href = "login.html";
-	} else {
-		document.getElementById("userName").innerHTML = firstName + " " + lastName;
-		window.location.href = "contacts.html";
+	if (!stayOnPage) {
+		if (userId < 0) {
+			window.location.href = "login.html";
+		} else {
+			window.location.href = "contacts.html";
+		}
 	}
 }
 
@@ -244,13 +253,14 @@ function addContact() {
 	}
 
 	let tmp = {
-		name: fname.value,
-		phone: phone.value,
-		email: email.value,
-		userId,
+		contact: {
+			name: fname.value,
+			phone: phone.value,
+			email: email.value,
+		},
+		userId: userId,
 	};
 	let jsonPayload = JSON.stringify(tmp);
-
 	let url = urlBase + '/AddContact.' + extension;
 
 	let xhr = new XMLHttpRequest();
@@ -259,22 +269,26 @@ function addContact() {
 	try {
 		xhr.onreadystatechange = function () {
 			if (this.readyState == 4 && this.status == 200) {
-				document.getElementById("contactAddResult").innerHTML = "<span style='color:green !important;'>Contact added successfully</span>";
-				if (document.getElementById("contactItems").innerHTML && fname.value.toLowerCase().includes(currentSearch.toLowerCase())) {
-					let jObj = JSON.parse(xhr.responseText);
-					var contact = {
-						id: jObj.id,
-						name: jObj.name,
-						phone: jObj.phone,
-						email: jObj.email
+				let jObj = JSON.parse(xhr.responseText);
+				if (jObj['error'] != "Contact Added") {
+					document.getElementById("contactAddResult").innerHTML = jObj['error'];
+				} else {
+					document.getElementById("contactAddResult").innerHTML = "<span style='color:green !important;'>Contact added successfully</span>";
+					if (document.getElementById("contactItems").innerHTML && fname.value.toLowerCase().includes(currentSearch.toLowerCase())) {
+						var contact = {
+							id: jObj.id,
+							name: jObj.name,
+							phone: jObj.phone,
+							email: jObj.email
+						}
+						addContactToResultList(contact, true);
 					}
-					addContactToResultList(contact, true);
+					fname.value = "";
+					phone.value = "";
+					document.getElementById("contactPhoneMaskInput").value = "";
+					document.getElementById("contactPhoneMaskInput").placeholder = "Phone"
+					email.value = "";
 				}
-				fname.value = "";
-				phone.value = "";
-				document.getElementById("contactPhoneMaskInput").value = "";
-				document.getElementById("contactPhoneMaskInput").placeholder = "Phone"
-				email.value = "";
 			}
 		};
 		xhr.send(jsonPayload);
@@ -484,7 +498,7 @@ function addContactToResultList(user, isNew) {
 		} else
 			nameInput.classList.remove("input-error");
 
-	    var phoneNum = document.getElementById(phoneInput.id);
+		var phoneNum = document.getElementById(phoneInput.id);
 		if (!phoneNum.value) {
 			hasError = true;
 			document.getElementById(phoneInput.id + "MaskInput").classList.add("input-error");
@@ -593,6 +607,9 @@ function searchContact() {
 			if (this.readyState == 4 && this.status == 200) {
 				document.getElementById("contactSearchResult").innerHTML = "";
 				let jsonObject = JSON.parse(xhr.responseText);
+				if (jsonObject['error']) {
+					document.getElementById("contactSearchResult").innerHTML = jsonObject['error'];
+				} else {
 				for (let i = 0; i < jsonObject.results.length; i++) {
 					var container = document.createElement("div");
 					container.classList.add("search-content");
@@ -661,6 +678,7 @@ function searchContact() {
 
 					});
 				}
+			}
 			} else {
 				document.getElementById("contactSearchResult").innerHTML = "There was a problem retrieving existing contacts";
 			}
