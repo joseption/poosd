@@ -160,6 +160,7 @@ input[type="password"] {
     max-height: 100px;
     overflow: auto;
     text-align: center;
+    min-height: 19px;
 }
 
 #contactSearchResult,

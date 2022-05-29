@@ -10,8 +10,7 @@ document.addEventListener('DOMContentLoaded', function () {
 	if (document.location.href.includes("contacts.html")) {
 		document.getElementById("closeRemoveContact").addEventListener("click", closeRemoveDialog);
 		document.getElementById("confirmContactRemove").addEventListener("click", confirmRemove);
-	}
-	else if (document.getElementById("homepage")) {
+	} else if (document.getElementById("homepage")) {
 		readCookie();
 	}
 });
@@ -20,11 +19,28 @@ function doLogin() {
 	userId = 0;
 	firstName = "";
 	lastName = "";
+	var hasError = false;
 
-	let login = document.getElementById("loginName").value;
-	let password = document.getElementById("loginPassword").value;
+	let login = document.getElementById("loginName");
+	let password = document.getElementById("loginPassword");
 
-	document.getElementById("loginResult").innerHTML = "";
+	if (!login.value) {
+		hasError = true;
+		login.classList.add("input-error");
+	} else
+		login.classList.remove("input-error");
+
+	if (!password.value) {
+		hasError = true;
+		password.classList.add("input-error");
+	} else
+		password.classList.remove("input-error");
+
+	if (hasError) {
+		document.getElementById("loginResult").innerHTML = "All fields are required";
+		return;
+	} else
+		document.getElementById("loginResult").innerHTML = "";
 
 	let tmp = {
 		login: login,
@@ -68,17 +84,45 @@ function doLogin() {
 }
 
 function doRegister() {
-	// METHOD MUST BE REDONE!!
 	userId = 0;
 	firstName = "";
 	lastName = "";
+	var hasError = false;
 
-	let login = document.getElementById("loginName").value;
-	let password = document.getElementById("loginPassword").value;
-	let first = document.getElementById("firstName").value;
-	let last = document.getElementById("lastName").value;
+	let login = document.getElementById("loginName");
+	let password = document.getElementById("loginPassword");
+	let first = document.getElementById("firstName");
+	let last = document.getElementById("lastName");
 
-	document.getElementById("loginResult").innerHTML = "";
+	if (!first.value) {
+		hasError = true;
+		first.classList.add("input-error");
+	} else
+		first.classList.remove("input-error");
+
+	if (!last.value) {
+		hasError = true;
+		last.classList.add("input-error");
+	} else
+		last.classList.remove("input-error");
+
+	if (!login.value) {
+		hasError = true;
+		login.classList.add("input-error");
+	} else
+		login.classList.remove("input-error");
+
+	if (!password.value) {
+		hasError = true;
+		password.classList.add("input-error");
+	} else
+		password.classList.remove("input-error");
+
+	if (hasError) {
+		document.getElementById("loginResult").innerHTML = "All fields are required";
+		return;
+	} else
+		document.getElementById("loginResult").innerHTML = "";
 
 	let tmp = {
 		login: login,
@@ -100,9 +144,7 @@ function doRegister() {
 				userId = jsonObject.id;
 
 				if (userId < 1) {
-					document.getElementById("loginName").classList.add("input-error");
-					document.getElementById("loginPassword").classList.add("input-error");
-					document.getElementById("loginResult").innerHTML = "The username or password was incorrect";
+					document.getElementById("loginResult").innerHTML = "There was an error creating the account";
 					return;
 				}
 
@@ -116,8 +158,6 @@ function doRegister() {
 		};
 		xhr.send(jsonPayload);
 	} catch (err) {
-		document.getElementById("loginName").classList.add("input-error");
-		document.getElementById("loginPassword").classList.add("input-error");
 		document.getElementById("loginResult").innerHTML = err.message;
 	}
 
@@ -336,7 +376,7 @@ function test() {
 	}
 
 	document.getElementById("contactList").style.display = "block";
-		closeRemoveDialog();
+	closeRemoveDialog();
 }
 
 function addContactToResultList(user, isNew) {
