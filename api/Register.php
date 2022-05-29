@@ -12,8 +12,15 @@
 	{
 		returnWithError( $conn->connect_error );
 	}
-	else
+	
+	if (strlen($password) < 8)
 	{
+		returnWithError("Password must be at least 8 characters long");
+	}
+	
+	else
+	{	
+
 
 		$stmt = $conn->prepare("INSERT into Users (firstName,lastName,login,password) VALUES(?,?,?,?)");
 		$stmt->bind_param("ssss", $firstName, $lastName, $login, $password);
