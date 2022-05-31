@@ -213,6 +213,7 @@ select {
     display: flex;
     flex-direction: row;
     gap: 30px;
+    align-items: center;
 }
 
 .search-btns {
@@ -246,6 +247,7 @@ select {
     padding: 10px;
     display: flex;
     font-weight: bold;
+    border-bottom: 1px solid #ced4da;
 }
 
 #contactHeader>div:not(:last-child) {
@@ -255,6 +257,7 @@ select {
 #contactList {
     position: relative;
     margin-top: 0.85em;
+    border: 1px solid #ced4da;
 }
 
 #contactItems input {
@@ -319,6 +322,7 @@ select {
     flex-direction: column;
     overflow: hidden;
     transition: all .15s ease;
+    min-width: 945px;
 }
 
 .contact-confirm-msg {

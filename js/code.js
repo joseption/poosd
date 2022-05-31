@@ -9,9 +9,10 @@ var isAddingContact = false;
 
 document.addEventListener('DOMContentLoaded', function () {
 	if (document.location.href.includes("contacts.html")) {
+		readCookie(true);
+		inputMaskSetup.init();
 		document.getElementById("closeRemoveContact").addEventListener("click", closeRemoveDialog);
 		document.getElementById("confirmContactRemove").addEventListener("click", confirmRemove);
-		readCookie(true);
 		document.getElementById("userName").innerHTML = firstName + " " + lastName;
 		document.addEventListener("keyup", function (e) {
 			if (e.key == "Enter") {
@@ -194,7 +195,7 @@ function saveCookie() {
 	let minutes = 20;
 	let date = new Date();
 	date.setTime(date.getTime() + (minutes * 60 * 1000));
-	document.cookie = "firstName=" + firstName + ",lastName=" + lastName + ",userId=" + userId + ";expires=" + date.toGMTString();
+	document.cookie = "firstName=" + firstName + ",lastName=" + lastName + ",userId=" + userId;
 }
 
 function readCookie(stayOnPage) {
@@ -213,21 +214,19 @@ function readCookie(stayOnPage) {
 		}
 	}
 
-	if (!stayOnPage) {
-		if (userId < 0) {
-			window.location.href = "login.html";
-		} else {
-			window.location.href = "contacts.html";
-		}
+	if (userId < 0 || isNaN(userId)) {
+		window.location.href = "login.html";
+	} else if (!stayOnPage) {
+		window.location.href = "contacts.html";
 	}
 }
 
 function doLogout() {
-	userId = 0;
+	userId = -1;
 	firstName = "";
 	lastName = "";
-	document.cookie = "firstName= ; expires = Thu, 01 Jan 1970 00:00:00 GMT";
-	window.location.href = "index.html";
+	document.cookie = "firstName=,lastName=,userId=";
+	readCookie();
 }
 
 function addContact() {
@@ -293,14 +292,9 @@ function addContact() {
 					document.getElementById("contactAddResult").innerHTML = jObj['error'];
 				} else {
 					document.getElementById("contactAddResult").innerHTML = "<span style='color:green !important;'>Contact added successfully</span>";
-					if (document.getElementById("contactItems").innerHTML && fname.value.toLowerCase().includes(currentSearch.toLowerCase())) {
-						var contact = {
-							id: jObj.id,
-							name: jObj.name,
-							phone: jObj.phone,
-							email: jObj.email
-						}
-						addContactToResultList(contact, true);
+					if (document.getElementById("contactItems").innerHTML && jObj['name'].toLowerCase().includes(currentSearch.toLowerCase())) {
+						addContactToResultList(jObj, true);
+						closeRemoveDialog();
 					}
 					fname.value = "";
 					phone.value = "";
@@ -317,80 +311,17 @@ function addContact() {
 
 }
 
-function test() {
+function handleContactResults(res) {
 	//need to save the current search to currentSearch
 	//need to build search display even if empty, but hide it and if a contact is added and it fits the criteria, add it and then display the search
-	if (document.getElementById("contactItems").innerHTML)
+	if (document.getElementById("contactItems").innerHTML) {
 		showLoadingContactResults();
+	}
 
 	document.getElementById("contactSearchResult").innerHTML = "";
-	let jsonObject = {
-		users: [{
-				id: 1,
-				name: 'Jeff Bleff',
-				phone: '5647385456',
-				email: 'jeff1@test.com'
-			},
-			{
-				id: 2,
-				name: 'Tina Mina',
-				phone: '5647385456',
-				email: 'jeff2@test.com'
-			},
-			{
-				id: 3,
-				name: 'Marge Darge',
-				phone: '5647385456',
-				email: 'jeff3@test.com'
-			},
-			{
-				id: 4,
-				name: 'Barb Garb',
-				phone: '5647385456',
-				email: 'jeff4@test.com'
-			},
-			{
-				id: 5,
-				name: 'Leslie Fezlie',
-				phone: '5647385456',
-				email: 'jeff5@test.com'
-			},
-			{
-				id: 6,
-				name: 'Roger Dodger',
-				phone: '5647385456',
-				email: 'jeff6@test.com'
-			},
-			{
-				id: 7,
-				name: 'George jenk',
-				phone: '5647385456',
-				email: 'jeff7@test.com'
-			},
-			{
-				id: 8,
-				name: 'Bob Bie',
-				phone: '5647385456',
-				email: 'jeff8@test.com'
-			},
-			{
-				id: 9,
-				name: 'Joe Reg',
-				phone: '5647385456',
-				email: 'jeff9@test.com'
-			},
-			{
-				id: 10,
-				name: 'Mike Tae',
-				phone: '5647385456',
-				email: 'jeff10@test.com'
-			}
-		]
-	};
-	let users = jsonObject['users'];
-	for (let i = 0; i < users.length; i++) {
+	for (let i = 0; i < res.length; i++) {
 		(function () {
-			addContactToResultList(users[i]);
+			addContactToResultList(res[i]);
 		})();
 	}
 
@@ -641,7 +572,9 @@ function closeRemoveDialog() {
 
 function searchContact() {
 	let srch = document.getElementById("searchText").value;
+	currentSearch = srch;
 	document.getElementById("contactSearchResult").innerHTML = "";
+	document.getElementById("contactItems").innerHTML = "";
 	let tmp = {
 		search: srch,
 		userId: userId
@@ -661,82 +594,13 @@ function searchContact() {
 				if (jsonObject['error']) {
 					document.getElementById("contactSearchResult").innerHTML = jsonObject['error'];
 				} else {
-					console.log(jsonObject);
-					/*for (let i = 0; i < jsonObject.results.length; i++) {
-						var container = document.createElement("div");
-						container.classList.add("search-content");
-						var id = document.createElement("div");
-						id.innerText = users[i]['id'];
-						id.style.display = "none";
-
-						var first = document.createElement("div");
-						first.innerText = users[i]['firstName'];
-						var last = document.createElement("div");
-						last.innerText = users[i]['lastName'];
-						var email = document.createElement("div");
-						email.innerText = users[i]['email'];
-
-						var remove = document.createElement("div");
-						remove.innerText = "Remove";
-						remove.classList.add("btn btn-danger");
-
-						var edit = document.createElement("div");
-						edit.innerText = "Edit";
-						edit.classList.add("btn btn-success");
-
-						var update = document.createElement("div");
-						update.innerText = "Update";
-						update.style.display = "none";
-						update.classList.add("btn btn-success");
-
-						var cancel = document.createElement("div");
-						cancel.innerText = "Cancel";
-						cancel.style.display = "none";
-						cancel.classList.add("btn btn-danger");
-
-						var btns = document.createElement("div");
-						container.appendChild(id);
-						container.appendChild(first);
-						container.appendChild(last);
-						container.appendChild(email);
-						btns.appendChild(remove);
-						btns.appendChild(edit);
-						btns.appendChild(cancel);
-						btns.appendChild(update);
-						container.appendChild(btns);
-
-						edit.addEventListener("click", function () {
-							remove.style.display = "none";
-							edit.style.display = "none";
-							update.style.display = "block";
-							cancel.style.display = "block";
-						});
-
-						cancel.addEventListener("click", function () {
-							remove.style.display = "block";
-							edit.style.display = "block";
-							update.style.display = "none";
-							cancel.style.display = "none";
-						});
-
-						update.addEventListener("click", function () {
-							remove.style.display = "block";
-							edit.style.display = "block";
-							update.style.display = "none";
-							cancel.style.display = "none";
-						});
-
-						remove.addEventListener("click", function () {
-
-						});
-					}*/
+					handleContactResults(jsonObject['results']);
 				}
 			} else {
 				document.getElementById("contactSearchResult").innerHTML = "There was a problem retrieving existing contacts";
 			}
 		};
 		xhr.send(jsonPayload);
-		B
 	} catch (err) {
 		document.getElementById("contactSearchResult").innerHTML = err.message;
 	}
