@@ -50,10 +50,15 @@
 							<div style="display:none;" id="loading"><i class="fa fa-spinner rotating"></i></div>
 							<div style="display:none;" id="removeContactDialog">
 								<div><b>Remove Contact</b></div>
-								<div class="contact-confirm-msg">
+								<div id="removeContactMessage" class="contact-confirm-msg">
 									<span>Are you sure you want to remove </span>
 									<span id="contactNameToRemove"></span>
 									<span> from the contacts list?</span>
+								</div>
+								<div style="display:none;" id="removeContactMessageError" class="contact-confirm-msg">
+									<span>Uh oh, something went wrong. Would you like to attempt to remove </span>
+									<span id="contactNameToRemoveError"></span>
+									<span> from the contacts list again?</span>
 								</div>
 								<div id="removeContactBtns">
 									<div id="closeRemoveContact" class="btn btn-default">Cancel</div>

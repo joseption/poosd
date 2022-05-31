@@ -5,6 +5,7 @@ let userId = 0;
 let firstName = "";
 let lastName = "";
 var currentSearch = "";
+var isAddingContact = false;
 
 document.addEventListener('DOMContentLoaded', function () {
 	if (document.location.href.includes("contacts.html")) {
@@ -12,8 +13,23 @@ document.addEventListener('DOMContentLoaded', function () {
 		document.getElementById("confirmContactRemove").addEventListener("click", confirmRemove);
 		readCookie(true);
 		document.getElementById("userName").innerHTML = firstName + " " + lastName;
+		document.addEventListener("keyup", function (e) {
+			if (e.key == "Enter") {
+				if (isAddingContact)
+					document.getElementById("addContactButton").click();
+				else
+					document.getElementById("searchContactButton").click();
+			}
+		});
 	} else if (document.getElementById("homepage")) {
 		readCookie();
+	} else if (document.location.href.includes("login.html") ||
+		document.location.href.includes("register.html")) {
+		document.addEventListener("keyup", function (e) {
+			if (e.key == "Enter") {
+				document.getElementById("loginButton").click();
+			}
+		});
 	}
 });
 
@@ -61,7 +77,10 @@ function doLogin() {
 				let jsonObject = JSON.parse(xhr.responseText);
 				userId = jsonObject['id'];
 				if (jsonObject['error']) {
-					document.getElementById("loginResult").innerHTML = jsonObject['error'];
+					if (jsonObject['error'] == "No Records Found")
+						document.getElementById("loginResult").innerHTML = "An account with that username does not exist";
+					else
+						document.getElementById("loginResult").innerHTML = jsonObject['error'];
 				} else {
 					if (userId < 1) {
 						document.getElementById("loginName").classList.add("input-error");
@@ -562,20 +581,52 @@ function showLoadingContactResults() {
 function promptRemove(id, user, container) {
 	document.getElementById("removeContactDialog").style.display = "flex";
 	document.getElementById("contactNameToRemove").innerText = user;
+	document.getElementById("contactNameToRemoveError").innerText = user;
 	document.getElementById("mainContactContent").classList.add("blur");
 	document.getElementById("removeContactContainer").style.display = "block";
 	setTimeout(() => {
 		document.getElementById("removeContactDialog").classList.add("default-scale");
 	}, 50);
+	document.getElementById("confirmContactRemove").innerText = "Confirm";
 	document.getElementById("confirmContactRemove").userID = id;
 	document.getElementById("confirmContactRemove").userItem = container;
+	document.getElementById("removeContactMessageError").style.display = "none";
+	document.getElementById("removeContactMessage").style.display = "block";
 }
 
 function confirmRemove(event) {
-	event.currentTarget.userItem.parentElement.removeChild(event.currentTarget.userItem);
-	if (!document.getElementById("contactItems").innerHTML)
-		document.getElementById("mainContactContent").style.display = "none";
-	closeRemoveDialog();
+	let item = event.currentTarget.userItem;
+	let tmp = {
+		ID: event.currentTarget.userID
+	};
+	let jsonPayload = JSON.stringify(tmp);
+	let url = urlBase + '/DeleteContact.' + extension;
+
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try {
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				let jObj = JSON.parse(xhr.responseText);
+				if (jObj['error'] != "Contact Deleted") {
+					document.getElementById("confirmContactRemove").innerText = "Try Again";
+					document.getElementById("removeContactMessageError").style.display = "block";
+					document.getElementById("removeContactMessage").style.display = "none";
+				} else {
+					item.parentElement.removeChild(item);
+					if (!document.getElementById("contactItems").innerHTML)
+						document.getElementById("mainContactContent").style.display = "none";
+					closeRemoveDialog();
+				}
+			}
+		};
+		xhr.send(jsonPayload);
+	} catch (err) {
+		document.getElementById("confirmContactRemove").innerText = "Try Again";
+		document.getElementById("removeContactMessageError").style.display = "block";
+		document.getElementById("removeContactMessage").style.display = "none";
+	}
 }
 
 function closeRemoveDialog() {
@@ -610,75 +661,76 @@ function searchContact() {
 				if (jsonObject['error']) {
 					document.getElementById("contactSearchResult").innerHTML = jsonObject['error'];
 				} else {
-				for (let i = 0; i < jsonObject.results.length; i++) {
-					var container = document.createElement("div");
-					container.classList.add("search-content");
-					var id = document.createElement("div");
-					id.innerText = users[i]['id'];
-					id.style.display = "none";
+					console.log(jsonObject);
+					/*for (let i = 0; i < jsonObject.results.length; i++) {
+						var container = document.createElement("div");
+						container.classList.add("search-content");
+						var id = document.createElement("div");
+						id.innerText = users[i]['id'];
+						id.style.display = "none";
 
-					var first = document.createElement("div");
-					first.innerText = users[i]['firstName'];
-					var last = document.createElement("div");
-					last.innerText = users[i]['lastName'];
-					var email = document.createElement("div");
-					email.innerText = users[i]['email'];
+						var first = document.createElement("div");
+						first.innerText = users[i]['firstName'];
+						var last = document.createElement("div");
+						last.innerText = users[i]['lastName'];
+						var email = document.createElement("div");
+						email.innerText = users[i]['email'];
 
-					var remove = document.createElement("div");
-					remove.innerText = "Remove";
-					remove.classList.add("btn btn-danger");
+						var remove = document.createElement("div");
+						remove.innerText = "Remove";
+						remove.classList.add("btn btn-danger");
 
-					var edit = document.createElement("div");
-					edit.innerText = "Edit";
-					edit.classList.add("btn btn-success");
+						var edit = document.createElement("div");
+						edit.innerText = "Edit";
+						edit.classList.add("btn btn-success");
 
-					var update = document.createElement("div");
-					update.innerText = "Update";
-					update.style.display = "none";
-					update.classList.add("btn btn-success");
-
-					var cancel = document.createElement("div");
-					cancel.innerText = "Cancel";
-					cancel.style.display = "none";
-					cancel.classList.add("btn btn-danger");
-
-					var btns = document.createElement("div");
-					container.appendChild(id);
-					container.appendChild(first);
-					container.appendChild(last);
-					container.appendChild(email);
-					btns.appendChild(remove);
-					btns.appendChild(edit);
-					btns.appendChild(cancel);
-					btns.appendChild(update);
-					container.appendChild(btns);
-
-					edit.addEventListener("click", function () {
-						remove.style.display = "none";
-						edit.style.display = "none";
-						update.style.display = "block";
-						cancel.style.display = "block";
-					});
-
-					cancel.addEventListener("click", function () {
-						remove.style.display = "block";
-						edit.style.display = "block";
+						var update = document.createElement("div");
+						update.innerText = "Update";
 						update.style.display = "none";
+						update.classList.add("btn btn-success");
+
+						var cancel = document.createElement("div");
+						cancel.innerText = "Cancel";
 						cancel.style.display = "none";
-					});
+						cancel.classList.add("btn btn-danger");
 
-					update.addEventListener("click", function () {
-						remove.style.display = "block";
-						edit.style.display = "block";
-						update.style.display = "none";
-						cancel.style.display = "none";
-					});
+						var btns = document.createElement("div");
+						container.appendChild(id);
+						container.appendChild(first);
+						container.appendChild(last);
+						container.appendChild(email);
+						btns.appendChild(remove);
+						btns.appendChild(edit);
+						btns.appendChild(cancel);
+						btns.appendChild(update);
+						container.appendChild(btns);
 
-					remove.addEventListener("click", function () {
+						edit.addEventListener("click", function () {
+							remove.style.display = "none";
+							edit.style.display = "none";
+							update.style.display = "block";
+							cancel.style.display = "block";
+						});
 
-					});
+						cancel.addEventListener("click", function () {
+							remove.style.display = "block";
+							edit.style.display = "block";
+							update.style.display = "none";
+							cancel.style.display = "none";
+						});
+
+						update.addEventListener("click", function () {
+							remove.style.display = "block";
+							edit.style.display = "block";
+							update.style.display = "none";
+							cancel.style.display = "none";
+						});
+
+						remove.addEventListener("click", function () {
+
+						});
+					}*/
 				}
-			}
 			} else {
 				document.getElementById("contactSearchResult").innerHTML = "There was a problem retrieving existing contacts";
 			}
@@ -692,6 +744,7 @@ function searchContact() {
 }
 
 function openAddContactDialog() {
+	isAddingContact = true;
 	document.getElementById("addContactDiv").style.display = "none";
 	document.getElementById("searchContactDiv").style.display = "flex";
 	document.getElementById("addContactDialog").style.display = "flex";
@@ -704,6 +757,7 @@ function openAddContactDialog() {
 }
 
 function openSearchContactDialog() {
+	isAddingContact = false;
 	setTimeout(() => {
 		document.getElementById("addContactDiv").style.display = "flex";
 		document.getElementById("searchContactDiv").style.display = "none";
@@ -723,6 +777,7 @@ function openSearchContactDialog() {
 	}, 150);
 	document.getElementById("inputForm").classList.add("no-height");
 	document.getElementById("accessUIDiv").style.display = "flex";
+	document.getElementById("contactSearchResult").innerText = "";
 }
 
 function formatPhoneNumber(value) {

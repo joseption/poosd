@@ -325,7 +325,8 @@ select {
     gap: 4px;
 }
 
-#contactNameToRemove {
+#contactNameToRemove,
+#contactNameToRemoveError {
     font-weight: bold;
 }
 
@@ -462,4 +463,8 @@ select {
 
   span.phone-number-shell {
     background-color: transparent;
+  }
+
+  #removeContactMessageError {
+      color: red;
   }
