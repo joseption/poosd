@@ -1,7 +1,7 @@
 <?php
 
 	// needs to be fixed
-	//  not owkring atm
+	//  not working atm
 
 	$inData = getRequestInfo();
 
@@ -21,14 +21,13 @@
 	} 
 	else
 	{
-		$stmt = $conn->prepare("INSERT into Contacts (Name, Phone, Email, UserID) WHERE ID=? VALUES(?,?,?,?)");
-		$stmt->bind_param("isssi", $contactid, $name, $phone, $email, $userid);
+		$stmt = $conn->prepare("UPDATE Contacts SET Name=$name, Phone=$phone, Email=$email, UserID=$userid) WHERE ID=?");
+		$stmt->bind_param("i", $contactid);
 		$stmt->execute();
 		$stmt->close();
 		
-		$last_id = $conn->insert_id;
 		$stmt = $conn->prepare("SELECT ID, Name, Phone, Email FROM Contacts WHERE id=?");
-		$stmt->bind_param("s", $last_id);
+		$stmt->bind_param("i", $contactid);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		
