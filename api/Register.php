@@ -37,7 +37,7 @@
 		}
 		else
 		{
-		returnWithError("Account created?"); // Account made, no error
+		returnWithError("Account Creation Failed"); // Account not found
 		}
 		$stmt->close();
 		$conn->close();
