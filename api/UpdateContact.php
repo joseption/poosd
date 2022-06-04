@@ -1,10 +1,8 @@
 <?php
 
-	//
-	//
-	//
-	//
-	//
+	// needs to be fixed
+	//  not owkring atm
+
 	$inData = getRequestInfo();
 
 	$userid = $inData["userId"];
@@ -23,8 +21,8 @@
 	} 
 	else
 	{
-		$stmt = $conn->prepare("INSERT into Contacts (Name, Phone, Email, UserID) Where id=? VALUES(?,?,?,?)");
-		$stmt->bind_param("sssi", $contactid, $name, $phone, $email, $userid);
+		$stmt = $conn->prepare("INSERT into Contacts (Name, Phone, Email, UserID) WHERE ID=? VALUES(?,?,?,?)");
+		$stmt->bind_param("isssi", $contactid, $name, $phone, $email, $userid);
 		$stmt->execute();
 		$stmt->close();
 		
@@ -40,7 +38,7 @@
 		}
 		else
 		{
-			returnWithError("Contact Creation Failed"); // Account not verified
+			returnWithError("Contact Update Failed"); // Account not updated
 		}
 		$stmt->close();
 
