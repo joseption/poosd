@@ -1,8 +1,5 @@
 <?php
 
-	// needs to be fixed
-	//  not working atm
-
 	$inData = getRequestInfo();
 
 	$userid = $inData["userId"];
@@ -21,13 +18,13 @@
 	} 
 	else
 	{
-		$stmt = $conn->prepare("UPDATE Contacts SET Name=$name, Phone=$phone, Email=$email, UserID=$userid WHERE ID=?");
-		$stmt->bind_param("i", $contactid);
+		$stmt = $conn->prepare("UPDATE Contacts SET Name=?, Phone=?, Email=? WHERE ID=? AND UserID=?");
+		$stmt->bind_param("sssis", $name, $phone, $email, $contactid, $userid);
 		$stmt->execute();
 		$stmt->close();
 		
-		$stmt = $conn->prepare("SELECT ID, Name, Phone, Email FROM Contacts WHERE id=?");
-		$stmt->bind_param("i", $contactid);
+		$stmt = $conn->prepare("SELECT ID, Name, Phone, Email FROM Contacts WHERE id=? AND UserID=?");
+		$stmt->bind_param("is", $contactid, $userid);
 		$stmt->execute();
 		$result = $stmt->get_result();
 		
@@ -57,7 +54,7 @@
 	
 	function returnWithInfo( $name, $phone, $email, $id )
 	{
-		$retValue = '{"id":' . $id . ',"name":"' . $name . '","phone":"' . $phone . '","email":"' . $email . '","error":"Contact Added"}';
+		$retValue = '{"id":' . $id . ',"name":"' . $name . '","phone":"' . $phone . '","email":"' . $email . '","error":"Contact Updated"}';
 		sendResultInfoAsJson( $retValue );
 	}
 

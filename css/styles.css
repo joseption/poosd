@@ -207,6 +207,7 @@ select {
     display: flex;
     align-items: center;
     padding: 10px;
+    transition: background .15s ease;
 }
 
 .search-info {
@@ -224,6 +225,10 @@ select {
 
 .search-content:nth-child(odd) {
     background-color: #ececec;
+}
+
+.search-content:hover {
+    background-color: #eeeeff;
 }
 
 .search-info>div {
@@ -398,77 +403,121 @@ select {
     font-size: 25px;
 }
 
-@-webkit-keyframes rotating /* Safari and Chrome */ {
+@-webkit-keyframes rotating
+
+/* Safari and Chrome */
+    {
     from {
-      -webkit-transform: rotate(0deg);
-      -o-transform: rotate(0deg);
-      transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
     }
+
     to {
-      -webkit-transform: rotate(360deg);
-      -o-transform: rotate(360deg);
-      transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
     }
-  }
-  @keyframes rotating {
+}
+
+@keyframes rotating {
     from {
-      -ms-transform: rotate(0deg);
-      -moz-transform: rotate(0deg);
-      -webkit-transform: rotate(0deg);
-      -o-transform: rotate(0deg);
-      transform: rotate(0deg);
+        -ms-transform: rotate(0deg);
+        -moz-transform: rotate(0deg);
+        -webkit-transform: rotate(0deg);
+        -o-transform: rotate(0deg);
+        transform: rotate(0deg);
     }
+
     to {
-      -ms-transform: rotate(360deg);
-      -moz-transform: rotate(360deg);
-      -webkit-transform: rotate(360deg);
-      -o-transform: rotate(360deg);
-      transform: rotate(360deg);
+        -ms-transform: rotate(360deg);
+        -moz-transform: rotate(360deg);
+        -webkit-transform: rotate(360deg);
+        -o-transform: rotate(360deg);
+        transform: rotate(360deg);
     }
-  }
-  .rotating {
+}
+
+.rotating {
     -webkit-animation: rotating 2s linear infinite;
     -moz-animation: rotating 2s linear infinite;
     -ms-animation: rotating 2s linear infinite;
     -o-animation: rotating 2s linear infinite;
     animation: rotating 2s linear infinite;
-  }
+}
 
-  .phone-number-shell {
+.phone-number-shell {
     position: relative;
     line-height: 1;
     display: flex;
-  }
-  .phone-number-shell span {
+}
+
+.phone-number-shell span {
     position: absolute;
     padding: 4px 7px;
     font-size: 1.25em;
     line-height: 30px;
     color: gray;
     pointer-events: none;
-  }
+}
 
-  .default-shell span {
+.default-shell span {
     padding: 1px 7px !important;
     font-size: unset !important;
     line-height: 31px !important;
-  }
+}
 
-  .phone-number-masked {
+.phone-number-masked {
     visibility: hidden;
     display: none !important;
     position: absolute;
-  }
-  .phone-number-shell span i {
+}
+
+.phone-number-shell span i {
     color: transparent;
     opacity: 0;
     visibility: hidden;
-  }
+}
 
-  span.phone-number-shell {
+span.phone-number-shell {
     background-color: transparent;
-  }
+}
 
-  #removeContactMessageError {
-      color: red;
-  }
+#removeContactMessageError {
+    color: red;
+}
+
+.update-error {
+    background-color: #ffc0c0 !important;
+}
+
+.update-error-input {
+    animation: shake 0.82s cubic-bezier(.36, .07, .19, .97) both;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+    perspective: 1000px;
+}
+
+@keyframes shake {
+
+    10%,
+    90% {
+        transform: translate3d(-1px, 0, 0);
+    }
+
+    20%,
+    80% {
+        transform: translate3d(2px, 0, 0);
+    }
+
+    30%,
+    50%,
+    70% {
+        transform: translate3d(-4px, 0, 0);
+    }
+
+    40%,
+    60% {
+        transform: translate3d(4px, 0, 0);
+    }
+}

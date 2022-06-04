@@ -312,8 +312,6 @@ function addContact() {
 }
 
 function handleContactResults(res) {
-	//need to save the current search to currentSearch
-	//need to build search display even if empty, but hide it and if a contact is added and it fits the criteria, add it and then display the search
 	if (document.getElementById("contactItems").innerHTML) {
 		showLoadingContactResults();
 	}
@@ -411,7 +409,7 @@ function addContactToResultList(user, isNew) {
 	btns.appendChild(update);
 	container.appendChild(btns);
 
-	edit.addEventListener("click", function () {
+	edit.addEventListener("click", function (e) {
 		remove.style.display = "none";
 		edit.style.display = "none";
 		update.style.display = "block";
@@ -424,7 +422,7 @@ function addContactToResultList(user, isNew) {
 		emailLabel.style.display = "none";
 	});
 
-	cancel.addEventListener("click", function () {
+	cancel.addEventListener("click", function (e) {
 		remove.style.display = "block";
 		edit.style.display = "block";
 		update.style.display = "none";
@@ -438,9 +436,11 @@ function addContactToResultList(user, isNew) {
 		nameInput.value = nameLabel.innerText;
 		phoneInput.value = formatPhoneNumber(phoneLabel.innerText);
 		emailInput.value = emailLabel.innerText;
+		container.classList.remove('update-error');
+		info.classList.remove('update-error-input');
 	});
 
-	update.addEventListener("click", function () {
+	update.addEventListener("click", function (e) {
 		var hasError = false;
 		if (!nameInput.value) {
 			hasError = true;
@@ -466,23 +466,35 @@ function addContactToResultList(user, isNew) {
 		if (hasError)
 			return;
 
-		remove.style.display = "block";
-		edit.style.display = "block";
-		update.style.display = "none";
-		cancel.style.display = "none";
-		nameInput.style.display = "none";
-		phoneContainer.style.display = "none";
-		emailInput.style.display = "none";
-		nameLabel.style.display = "block";
-		phoneLabel.style.display = "block";
-		emailLabel.style.display = "block";
-		nameLabel.innerText = nameInput.value;
-		var phoneNum = document.getElementById(phoneInput.id);
-		phoneLabel.innerText = formatPhoneNumber(phoneNum.value);
-		emailLabel.innerText = emailInput.value;
+		var setup = (name, phone, email, error) => {
+			if (error == "Contact Updated") {
+				remove.style.display = "block";
+				edit.style.display = "block";
+				update.style.display = "none";
+				cancel.style.display = "none";
+				nameInput.style.display = "none";
+				phoneContainer.style.display = "none";
+				emailInput.style.display = "none";
+				nameLabel.style.display = "block";
+				phoneLabel.style.display = "block";
+				emailLabel.style.display = "block";
+				nameLabel.innerText = name;
+				phoneLabel.innerText = formatPhoneNumber(phone);
+				emailLabel.innerText = email;
+				container.classList.remove('update-error');
+				info.classList.remove('update-error-input');
+			} else {
+				info.classList.remove('update-error-input');
+				container.classList.add('update-error');
+				setTimeout(() => {
+					info.classList.add('update-error-input');
+				}, 50);
+			}
+		}
+		doUpdateContact(id.innerText, nameInput.value, document.getElementById(phoneInput.id).value, emailInput.value, userId, setup);
 	});
 
-	remove.addEventListener("click", function () {
+	remove.addEventListener("click", function (e) {
 		promptRemove(user['id'], nameLabel.innerText, container);
 	});
 
@@ -499,6 +511,35 @@ function addContactToResultList(user, isNew) {
 
 	labelMaskSetup.init();
 	inputMaskSetup.init(true);
+}
+
+function doUpdateContact(id, name, phone, email, userId, exec) {
+	let tmp = {
+		userId: userId,
+		contact: {
+			id: id,
+			name: name,
+			phone: phone,
+			email: email,
+		}
+	};
+	let jsonPayload = JSON.stringify(tmp);
+	let url = urlBase + '/UpdateContact.' + extension;
+
+	let xhr = new XMLHttpRequest();
+	xhr.open("POST", url, true);
+	xhr.setRequestHeader("Content-type", "application/json; charset=UTF-8");
+	try {
+		xhr.onreadystatechange = function () {
+			if (this.readyState == 4 && this.status == 200) {
+				let jObj = JSON.parse(xhr.responseText);
+				exec(jObj['name'], jObj['phone'], jObj['email'], jObj['error']);
+			}
+		};
+		xhr.send(jsonPayload);
+	} catch (err) {
+		exec("", "", "", "There was a problem updating the contact");
+	}
 }
 
 function showLoadingContactResults() {
