@@ -301,6 +301,7 @@ function addContact() {
 					document.getElementById("contactPhoneMaskInput").value = "";
 					document.getElementById("contactPhoneMaskInput").placeholder = "Phone"
 					email.value = "";
+					document.getElementById("contactName").focus();
 				}
 			}
 		};
@@ -373,26 +374,42 @@ function addContactToResultList(user, isNew) {
 	email.appendChild(emailInput);
 
 	var remove = document.createElement("div");
-	remove.innerText = "Remove";
+	var removeText = document.createElement("span");
+	remove.appendChild(removeText);
+	removeText.innerText = "Remove";
 	remove.classList.add("btn");
 	remove.classList.add("btn-danger");
+	remove.classList.add("remove");
+	remove.classList.add("option-btn");
 
 	var edit = document.createElement("div");
-	edit.innerText = "Edit";
+	var editText = document.createElement("span");
+	edit.appendChild(editText);
+	editText.innerText = "Edit";
 	edit.classList.add("btn");
 	edit.classList.add("btn-success");
+	edit.classList.add("edit");
+	edit.classList.add("option-btn");
 
 	var update = document.createElement("div");
-	update.innerText = "Update";
+	var updateText = document.createElement("span");
+	update.appendChild(updateText);
+	updateText.innerText = "Update";
 	update.style.display = "none";
 	update.classList.add("btn");
 	update.classList.add("btn-success");
+	update.classList.add("update");
+	update.classList.add("option-btn");
 
 	var cancel = document.createElement("div");
-	cancel.innerText = "Cancel";
+	var cancelText = document.createElement("span");
+	cancel.appendChild(cancelText);
+	cancelText.innerText = "Cancel";
 	cancel.style.display = "none";
 	cancel.classList.add("btn");
 	cancel.classList.add("btn-danger");
+	cancel.classList.add("cancel");
+	cancel.classList.add("option-btn");
 
 	var btns = document.createElement("div");
 	var info = document.createElement("div");
@@ -412,8 +429,8 @@ function addContactToResultList(user, isNew) {
 	edit.addEventListener("click", function (e) {
 		remove.style.display = "none";
 		edit.style.display = "none";
-		update.style.display = "block";
-		cancel.style.display = "block";
+		update.style.display = "flex";
+		cancel.style.display = "flex";
 		nameInput.style.display = "block";
 		phoneContainer.style.display = "block";
 		emailInput.style.display = "block";
@@ -423,8 +440,8 @@ function addContactToResultList(user, isNew) {
 	});
 
 	cancel.addEventListener("click", function (e) {
-		remove.style.display = "block";
-		edit.style.display = "block";
+		remove.style.display = "flex";
+		edit.style.display = "flex";
 		update.style.display = "none";
 		cancel.style.display = "none";
 		nameInput.style.display = "none";
@@ -468,8 +485,8 @@ function addContactToResultList(user, isNew) {
 
 		var setup = (name, phone, email, error) => {
 			if (error == "Contact Updated") {
-				remove.style.display = "block";
-				edit.style.display = "block";
+				remove.style.display = "flex";
+				edit.style.display = "flex";
 				update.style.display = "none";
 				cancel.style.display = "none";
 				nameInput.style.display = "none";

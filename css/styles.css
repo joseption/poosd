@@ -25,18 +25,160 @@ body {
     color: #FFFFFF;
 }
 
-#loginDiv {
-    padding: 40px;
-    background: white;
-    border-radius: 10px;
-    width: fit-content;
+@media all and (max-width: 1000px) {
+    .desktop {
+        display: none !important;
+    }
+
+    #mainDiv {
+        background: white;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        align-items: center;
+        height: fit-content;
+        padding: 20px 10px;
+        overflow-y: auto;
+        overflow-x: hidden;
+        max-height: calc(100vh - 60px);
+        box-shadow: 0px 3px 10px 1px #0000001f;
+    }
+
+    #mainContactContent {
+        min-width: 342px;
+    }
+
+    .search-info {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 2px;
+    }
+
+    .contactHeader {
+        padding: 10px;
+        display: flex;
+        font-weight: bold;
+        border-bottom: 1px solid #ced4da;
+    }
+
+    .contactHeader>div:not(:last-child) {
+        width: 230px;
+    }
+
+    #loginName,
+    #loginPassword,
+    #firstName,
+    #lastName,
+    #searchText,
+    #contactName,
+    #contactPhone,
+    #contactEmail,
+    #contactPhoneMaskInput {
+        font-size: 1.25em;
+        width: 280px;
+    }
+
+    .option-btn {
+        font-family: 'Font Awesome 5 Free' !important;
+        font-weight: 900;
+        font-size: 1em !important;
+        padding: 5px !important;
+        width: 25px !important;
+        height: 25px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .option-btn>span {
+        display:none;
+    }
+
+    .update:after {
+        content: "\f00c";
+    }
+
+    .cancel:after {
+        content: "\f00d";
+    }
+
+    .edit:after {
+        content: "\f303";
+    }
+
+    .remove:after {
+        content: "\f1f8";
+    }
+}
+
+@media all and (min-width: 1000px) {
+    .mobile {
+        display: none !important;
+    }
+
+    #mainDiv {
+        padding: 40px;
+        background: white;
+        border-radius: 10px;
+        width: fit-content;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        box-shadow: 0px 3px 10px 1px #0000001f;
+        max-width: 400px;
+        max-height: 500px;
+    }
+
+    #mainContactContent {
+        min-width: 945px;
+    }
+
+    .search-info {
+        display: flex;
+        flex-direction: row;
+        gap: 30px;
+        align-items: center;
+    }
+
+    .contact-content {
+        position: relative;
+        max-width: unset !important;
+        max-height: unset !important;
+    }
+
+    .contactHeader {
+        padding: 10px;
+        display: flex;
+        font-weight: bold;
+        border-bottom: 1px solid #ced4da;
+    }
+
+    .contactHeader>div:not(:last-child) {
+        width: 230px;
+    }
+
+    #loginName,
+    #loginPassword,
+    #firstName,
+    #lastName,
+    #searchText,
+    #contactName,
+    #contactPhone,
+    #contactEmail,
+    #contactPhoneMaskInput {
+        font-size: 1.25em;
+        width: 300px;
+    }
+
+}
+
+.group-stack {
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: center;
-    box-shadow: 0px 3px 10px 1px #0000001f;
-    max-width: 400px;
-    max-height: 500px;
 }
 
 #loggedInDiv {
@@ -102,19 +244,6 @@ button {
 
 .btn-success:hover {
     background-color: olive;
-}
-
-#loginName,
-#loginPassword,
-#firstName,
-#lastName,
-#searchText,
-#contactName,
-#contactPhone,
-#contactEmail,
-#contactPhoneMaskInput {
-    font-size: 1.25em;
-    width: 300px;
 }
 
 .input-button {
@@ -210,13 +339,6 @@ select {
     transition: background .15s ease;
 }
 
-.search-info {
-    display: flex;
-    flex-direction: row;
-    gap: 30px;
-    align-items: center;
-}
-
 .search-btns {
     display: flex;
     gap: 5px;
@@ -241,24 +363,6 @@ select {
     overflow: auto;
 }
 
-.contact-content {
-    position: relative;
-    max-width: unset !important;
-    max-height: unset !important;
-}
-
-
-#contactHeader {
-    padding: 10px;
-    display: flex;
-    font-weight: bold;
-    border-bottom: 1px solid #ced4da;
-}
-
-#contactHeader>div:not(:last-child) {
-    width: 230px;
-}
-
 #contactList {
     position: relative;
     margin-top: 0.85em;
@@ -274,6 +378,7 @@ select {
 .search-btns>div {
     width: 75px;
     text-align: center;
+    justify-content: center;
 }
 
 .remove-background {
@@ -314,6 +419,7 @@ select {
     max-width: 500px;
     transition: all .15s ease;
     transform: scale(0);
+    margin: 10px;
 }
 
 .default-scale {
@@ -327,7 +433,6 @@ select {
     flex-direction: column;
     overflow: hidden;
     transition: all .15s ease;
-    min-width: 945px;
 }
 
 .contact-confirm-msg {

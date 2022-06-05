@@ -13,17 +13,21 @@
 </head>
 
 <body class="background flex">
-    <div id="loginDiv">
+    <div id="mainDiv">
         <span id="inner-title">Create an Account</span>
-        <input type="text" id="firstName" placeholder="First Name" /><br />
-        <input type="text" id="lastName" placeholder="Last Name" /><br />
-        <input type="text" id="loginName" placeholder="Username" /><br />
-        <input type="password" id="loginPassword" placeholder="Password" /><br />
-        <span id="loginResult"></span>
-        <button type="button" id="loginButton" class="btn btn-primary" onclick="doRegister();">Register</button>
-        <hr class="form-hr" />
-        <span class="sub-title">Already have an account?</span>
-        <a class="btn-success btn button" href="./login.html">Login</a>
+        <div class="group-stack">
+            <input type="text" id="firstName" placeholder="First Name" /><br />
+            <input type="text" id="lastName" placeholder="Last Name" /><br />
+            <input type="text" id="loginName" placeholder="Username" /><br />
+            <input type="password" id="loginPassword" placeholder="Password" /><br />
+            <span id="loginResult"></span>
+            <button type="button" id="loginButton" class="btn btn-primary" onclick="doRegister();">Register</button>
+        </div>
+        <div class="group-stack">
+            <hr class="form-hr" />
+            <span class="sub-title">Already have an account?</span>
+            <a class="btn-success btn button" href="./login.html">Login</a>
+        </div>
     </div>
 </body>
 
