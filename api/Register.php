@@ -37,7 +37,7 @@
 		}
 		else
 		{
-			returnWithError("This Login is taken"); // Account not registered
+			returnWithError("This username is already taken"); // Account not registered
 		}
 		$stmt->close();
 		$conn->close();
