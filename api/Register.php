@@ -20,24 +20,24 @@
 	
 	else
 	{	
-
-
 		$stmt = $conn->prepare("INSERT into Users (firstName,lastName,login,password) VALUES(?,?,?,?)");
 		$stmt->bind_param("ssss", $firstName, $lastName, $login, $password);
 		$stmt->execute();
 		$stmt->close();
-		$stmt = $conn->prepare("SELECT ID,firstName,lastName FROM Users WHERE Login=? AND Password =?");
-		$stmt->bind_param("ss", $inData["login"], $inData["password"]);
+
+		$last_id = $conn->insert_id;
+		$stmt = $conn->prepare("SELECT ID, FirstName, LastName FROM Users WHERE id=?");
+		$stmt->bind_param("s", $last_id);
 		$stmt->execute();
 		$result = $stmt->get_result();
-
+		
 		if( $row = $result->fetch_assoc()  )
 		{
-			returnWithInfo( $row['firstName'], $row['lastName'], $row['ID'] );
+			returnWithInfo( $row['FirstName'], $row['LastName'], $row['ID'] );
 		}
 		else
 		{
-		returnWithError("Account Creation Failed"); // Account not found
+			returnWithError("This Login is taken"); // Account not registered
 		}
 		$stmt->close();
 		$conn->close();
